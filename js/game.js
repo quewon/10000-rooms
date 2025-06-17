@@ -760,7 +760,7 @@ class item {
 
             context.save();
                 let x;
-                if ((player.room.offset_x + player.room.width/2) * BLOCK_SIZE > player.camera.dest_x) {
+                if ((player.room.offset_x + player.room.width/2) * BLOCK_SIZE + player.camera.dest_x > 0) {
                     x = -BLOCK_SIZE - this.width;
                 } else {
                     x = (player.room.width + 1) * BLOCK_SIZE;
