@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <title>Document</title>
+    <style>
+        body {
+            background: #fefefe;
+            font-size: 16px;
+            font-family: sans-serif;
+            line-height: 1.3em;
+        }
+        canvas, .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        h1 {
+            font-family: serif;
+            line-height: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="center">
+        
+    </div>
+
+    <canvas>
+
+    </canvas>
+    
+</body>
+
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+<script src="js/player.js"></script>
+
+<script>
+    window.onresize = function() {
+        context.canvas.width = window.innerWidth * devicePixelRatio;
+        context.canvas.height = window.innerHeight * devicePixelRatio;
+        context.canvas.style.width = window.innerWidth + "px";
+        context.canvas.style.height = window.innerHeight + "px";
+
+        player.set_camera();
+    }
+
+    var previousTime = new Date();
+    var dontClear = false;
+    var blurred = false;
+    window.onblur = () => { blurred = true }
+    window.onfocus = () => { blurred = false }
+
+    function draw() {
+        const now = new Date();
+        const delta = now - previousTime;
+        previousTime = now;
+
+        context.fillStyle = palette.bg;
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+        context.save();
+
+            context.translate(context.canvas.width/2, context.canvas.height/2);
+            context.scale(devicePixelRatio, devicePixelRatio);
+
+            player.update(delta);
+            if (player.room.item) player.room.item.update(delta);
+
+            context.translate(player.camera.x, player.camera.y);
+            player.room.draw();
+        
+        context.restore();
+
+        requestAnimationFrame(draw);
+    }
+    
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function animate_loading() {
+        let div = document.querySelector("div");
+        var lines = [
+            "sounds from",
+            "광주",
+            "상일동",
+            "동숭동",
+            "raketstraat",
+            "universiteit gent",
+            "辰巳大明神",
+            "rue de aubervilliers",
+            "..."
+        ];
+
+        for (let i=0; i<lines.length; i++) {
+            let line = lines[i];
+            div.innerHTML += line;
+            if (i < lines.length - 1) div.innerHTML += "<br>";
+            await sleep(1000);
+        }
+    }
+
+    async function init() {
+        window.onresize();
+
+        await Promise.all([
+            await load_audio([
+                "ambience/Bar Bassie.m4a",
+                "ambience/Daiyatsushiro-daimyojin Shrine.m4a",
+                "ambience/New Recording.m4a",
+                "ambience/Raketstraat 2.m4a",
+                "ambience/Raketstraat 3.m4a",
+                "ambience/Raketstraat.m4a",
+                "ambience/Universiteit Gent - Campus Ufo.m4a",
+                "ambience/Dongsung-dong.m4a",
+                "ambience/Sangil-dong.m4a",
+                "ambience/Gwangju.m4a",
+                "ambience/Sara'S Kitchen.m4a"
+            ]),
+            await animate_loading(),
+        ]);
+
+        let div = document.querySelector("div");
+        div.innerHTML = "";
+
+        while (blurred) await sleep(1000);
+
+        await sleep(1000);
+
+        var lines = [
+            "<h1>10,000 rooms you could call home</h1>",
+            "this game has <b>sound</b>, sometimes subtle<br>",
+            "<b>arrow keys</b> to move<br>",
+            "<b>fullscreen</b> recommended<br>",
+            "3",
+            "2",
+            "1"
+        ];
+
+        for (let i=0; i<lines.length; i++) {
+            let line = lines[i];
+            div.innerHTML += line;
+            if (i < lines.length - 1) div.innerHTML += "<br>";
+            await sleep(line.length <= 1 ? 1000 : 2500);
+        }
+
+        player.enter_room(new room());
+        player.camera.x = player.camera.dest_x = -(player.room.offset_x + player.room.width/2) * BLOCK_SIZE;
+        player.camera.y = player.camera.dest_y = -(player.room.offset_y + player.room.height/2) * BLOCK_SIZE;
+
+        draw();
+    }
+
+    init();
+</script>
+
+</html>
