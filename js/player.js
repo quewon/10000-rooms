@@ -31,7 +31,9 @@ const player = {
 
         this.set_camera();
 
-        if (player.audio) player.audio.pause();
+        if (player.audio) {
+            player.audio.volume = 0;
+        }
         player.audio = room.audio;
         player.audio.currentTime = Math.random() * player.audio.duration;
         player.audio.play();
