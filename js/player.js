@@ -5,17 +5,20 @@ const player = {
     set_camera: function() {
         if (!this.room) return;
 
-        if ((this.room.offset_x - 1) * BLOCK_SIZE + this.camera.dest_x < -context.canvas.width/2/devicePixelRatio)
-            this.camera.dest_x = -(this.room.offset_x - 1) * BLOCK_SIZE - context.canvas.width/2/devicePixelRatio;
+        let hw = context.canvas.width/2/devicePixelRatio;
+        let hh = context.canvas.height/2/devicePixelRatio;
 
-        else if ((this.room.offset_x + this.room.width + 1) * BLOCK_SIZE + this.camera.dest_x > context.canvas.width/2/devicePixelRatio)
-            this.camera.dest_x = -(this.room.offset_x + player.room.width + 1) * BLOCK_SIZE + context.canvas.width/2/devicePixelRatio;
+        if ((this.room.offset_x - 1) * BLOCK_SIZE + this.camera.dest_x < -hw)
+            this.camera.dest_x = -(this.room.offset_x - 1) * BLOCK_SIZE - hw;
 
-        if ((this.room.offset_y - 1) * BLOCK_SIZE + this.camera.dest_y < -context.canvas.height/2/devicePixelRatio)
-            this.camera.dest_y = -(this.room.offset_y - 1) * BLOCK_SIZE - context.canvas.height/2/devicePixelRatio;
+        else if ((this.room.offset_x + this.room.width + 1) * BLOCK_SIZE + this.camera.dest_x > hw)
+            this.camera.dest_x = -(this.room.offset_x + player.room.width + 1) * BLOCK_SIZE + hw;
 
-        else if ((this.room.offset_y + this.room.height + 1) * BLOCK_SIZE + this.camera.dest_y > context.canvas.height/2/devicePixelRatio)
-            this.camera.dest_y = context.canvas.height/2/devicePixelRatio - (this.room.offset_y + this.room.height + 1) * BLOCK_SIZE;
+        if ((this.room.offset_y - 1) * BLOCK_SIZE + this.camera.dest_y < -hh)
+            this.camera.dest_y = -(this.room.offset_y - 1) * BLOCK_SIZE - hh;
+
+        else if ((this.room.offset_y + this.room.height + 1) * BLOCK_SIZE + this.camera.dest_y > hh)
+            this.camera.dest_y = hh - (this.room.offset_y + this.room.height + 1) * BLOCK_SIZE;
     },
     enter_room: function(room, entrance_tile) {
         entrance_tile = entrance_tile || 0;

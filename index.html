@@ -123,32 +123,32 @@
                 "ambience/Gwangju.m4a",
                 "ambience/Sara'S Kitchen.m4a"
             ]),
-            await animate_loading(),
+            // await animate_loading(),
         ]);
 
-        let div = document.querySelector("div");
-        div.innerHTML = "";
+        // let div = document.querySelector("div");
+        // div.innerHTML = "";
 
-        while (blurred) await sleep(1000);
+        // while (blurred) await sleep(1000);
 
-        await sleep(1000);
+        // await sleep(1000);
 
-        var lines = [
-            "<h1>10,000 rooms you could call home</h1>",
-            "this game has <b>sound</b>, sometimes subtle<br>",
-            "<b>arrow keys</b> to move<br>",
-            "<b>fullscreen</b> recommended<br>",
-            "3",
-            "2",
-            "1"
-        ];
+        // var lines = [
+        //     "<h1>10,000 rooms you could call home</h1>",
+        //     "this game has <b>sound</b>, sometimes subtle<br>",
+        //     "<b>arrow keys</b> to move<br>",
+        //     "<b>fullscreen</b> recommended<br>",
+        //     "3",
+        //     "2",
+        //     "1"
+        // ];
 
-        for (let i=0; i<lines.length; i++) {
-            let line = lines[i];
-            div.innerHTML += line;
-            if (i < lines.length - 1) div.innerHTML += "<br>";
-            await sleep(line.length <= 1 ? 1000 : 2500);
-        }
+        // for (let i=0; i<lines.length; i++) {
+        //     let line = lines[i];
+        //     div.innerHTML += line;
+        //     if (i < lines.length - 1) div.innerHTML += "<br>";
+        //     await sleep(line.length <= 1 ? 1000 : 2500);
+        // }
 
         player.enter_room(new room());
         player.camera.x = player.camera.dest_x = -(player.room.offset_x + player.room.width/2) * BLOCK_SIZE;

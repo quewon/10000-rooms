@@ -121,7 +121,7 @@ class room {
                         radian == RADIAN_LEFT && x == previous_room.width-1
                     ) {
                         let p = previous_room.prop_on_tile(x, y);
-                        if (p && p.is_on_wall && p.rotation == radian) {
+                        if (p && p.is_on_wall && p.rotation == radian && shared_props.indexOf(p) == -1) {
                             shared_props.push(p);
                         } else {
                             p = new prop([{ x: x, y: y }]);
@@ -615,14 +615,10 @@ class label extends prop {
 }
 
 class box extends prop {
-    constructor(tiles) {
-        super(tiles);
-        this.size = BLOCK_SIZE;
-    }
-
     draw() {
         context.lineWidth = LINE_WIDTH;
         context.strokeStyle = palette.lines;
+        context.fillStyle = palette.bg;
 
         let min_x = Infinity;
         let min_y = Infinity;
@@ -634,66 +630,24 @@ class box extends prop {
             if (tile.x > max_x) max_x = tile.x;
             if (tile.y < min_y) min_y = tile.y;
             if (tile.y > max_y) max_y = tile.y;
-
-            context.save();
-                context.translate((tile.x + .5) * BLOCK_SIZE, (tile.y + .5) * BLOCK_SIZE);
-
-                var adjacent = [0, 0, 0, 0];
-                var walls = [RADIAN_UP, RADIAN_RIGHT, RADIAN_DOWN, RADIAN_LEFT];
-                for (let b of this.tiles) {
-                    if (b == tile) continue;
-                    if (tile.y - 1 == b.y) adjacent[0] = 1;
-                    if (tile.x + 1 == b.x) adjacent[1] = 1;
-                    if (tile.y + 1 == b.y) adjacent[2] = 1;
-                    if (tile.x - 1 == b.x) adjacent[3] = 1;
-                }
-                
-                for (let i=0; i<walls.length; i++) {
-                    let wall = walls[i];
-                    if (adjacent[i] == 1) continue;
-                    context.save();
-                        let connect_left;
-                        let connect_right;
-
-                        if (wall == RADIAN_UP) {
-                            connect_left = adjacent[3] == 1;
-                            connect_right = adjacent[1] == 1;
-                        } else if (wall == RADIAN_RIGHT) {
-                            connect_left = adjacent[0] == 1;
-                            connect_right = adjacent[2] == 1;
-                        } else if (wall == RADIAN_DOWN) {
-                            connect_left = adjacent[1] == 1;
-                            connect_right = adjacent[3] == 1;
-                        } else {
-                            connect_left = adjacent[2] == 1;
-                            connect_right = adjacent[0] == 1;
-                        }
-
-                        let x1 = -BLOCK_SIZE/2;
-                        let x2 = BLOCK_SIZE/2;
-
-                        if (!connect_left) x1 = -this.size/2;
-                        if (!connect_right) x2 = this.size/2;
-
-                        context.rotate(wall);
-                        context.beginPath();
-                        context.moveTo(x1 - LINE_WIDTH, -this.size/2);
-                        context.lineTo(x2 + LINE_WIDTH, -this.size/2);
-
-                        context.stroke();
-                    context.restore();
-                }
-            context.restore();
         }
 
         max_x++;
         max_y++;
 
+        min_x *= BLOCK_SIZE;
+        min_y *= BLOCK_SIZE;
+        max_x *= BLOCK_SIZE;
+        max_y *= BLOCK_SIZE;
+
+        context.fillRect(min_x + WALL_WIDTH/2, min_y + WALL_WIDTH/2, max_x - min_x - WALL_WIDTH, max_y - min_y - WALL_WIDTH);
+
         context.beginPath();
-        context.moveTo(min_x * BLOCK_SIZE, min_y * BLOCK_SIZE);
-        context.lineTo(max_x * BLOCK_SIZE, max_y * BLOCK_SIZE);
-        context.moveTo(max_x * BLOCK_SIZE, min_y * BLOCK_SIZE);
-        context.lineTo(min_x * BLOCK_SIZE, max_y * BLOCK_SIZE);
+        context.moveTo(min_x, min_y);
+        context.lineTo(max_x, max_y);
+        context.moveTo(max_x, min_y);
+        context.lineTo(min_x, max_y);
+        context.rect(min_x, min_y, max_x - min_x, max_y - min_y);
         context.stroke();
     }
 }
