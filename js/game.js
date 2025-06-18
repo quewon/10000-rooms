@@ -419,10 +419,8 @@ class room {
 
             this.draw_room();
 
-            for (let prop of this.props)
-                prop.draw();
-
             if ((this.line_x || this.line_y) && (this.width > 1 && this.height > 1)) {
+                context.strokeStyle = "blue";
                 context.setLineDash([LINE_WIDTH, 5]);
                 context.lineWidth = LINE_WIDTH;
                 for (let line of [this.line_x, this.line_y]) {
@@ -434,6 +432,9 @@ class room {
                 }
                 context.setLineDash([]);
             }
+
+            for (let prop of this.props)
+                prop.draw();
 
             if (this.item) this.item.draw();
 
